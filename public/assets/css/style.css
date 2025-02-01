@@ -1,11 +1,18 @@
-/* General Styling */
+/* General Styles */
 body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #001f54, #0047b3);
+    color: white;
     text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #001a3d; /* Dark Blue */
-    color: #FFD700; /* Gold */
     margin: 0;
-    padding: 20px;
+    padding: 0;
+}
+
+/* Game Title */
+h1 {
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+    margin-top: 20px;
 }
 
 /* Game Board */
@@ -13,48 +20,96 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
-    gap: 5px;
+    gap: 10px;
     justify-content: center;
-    margin: 20px auto;
+    margin: 30px auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
 
 /* Game Cells */
 .cell {
     width: 100px;
     height: 100px;
-    background-color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    color: #FFD700;
     font-size: 2.5rem;
-    font-weight: bold;
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 5px;
+    align-items: center;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: transform 0.2s, box-shadow 0.3s ease-in-out;
 }
 
+/* Cell Hover Effect */
 .cell:hover {
-    background-color: #FFD700; /* Gold Hover */
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+/* Winning Animation */
+.cell.winning {
+    background: #FFD700;
+    color: #001f54;
+    animation: glow 1s infinite alternate;
+}
+
+/* Button */
+button {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    margin-top: 20px;
+    background: #FFD700;
+    color: #001f54;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+/* Button Hover */
+button:hover {
+    background: #ffcc00;
+    transform: scale(1.05);
 }
 
 /* Status Text */
 #status {
     font-size: 1.5rem;
-    margin-top: 10px;
+    margin-top: 20px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #FFD700;
 }
 
-/* Reset Button */
-#reset {
-    background: #FFD700;
-    color: #001a3d;
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 15px;
+/* Glowing Animation */
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px #FFD700;
+    }
+    to {
+        box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700;
+    }
 }
 
-#reset:hover {
-    background: #ffcc00;
+/* Responsive Design */
+@media (max-width: 600px) {
+    .board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+    }
+
+    .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
 }
