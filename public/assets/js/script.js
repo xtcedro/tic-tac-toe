@@ -5,6 +5,7 @@ const resetButton = document.getElementById("reset");
 let currentPlayer = "X";
 let gameBoard = ["", "", "", "", "", "", "", "", ""];
 let gameActive = true;
+let isAgainstAI = true; // Enable AI mode
 
 const winPatterns = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
@@ -12,19 +13,85 @@ const winPatterns = [
     [0, 4, 8], [2, 4, 6]  // Diagonals
 ];
 
-// Handle Cell Click
+// Handle Player Move
 function cellClick(e) {
     const index = e.target.dataset.index;
 
-    if (gameBoard[index] !== "" || !gameActive) return;
+    if (gameBoard[index] !== "" || !gameActive || (isAgainstAI && currentPlayer === "O")) return;
 
-    gameBoard[index] = currentPlayer;
-    e.target.textContent = currentPlayer;
+    makeMove(index, currentPlayer);
+    
+    if (isAgainstAI && gameActive) {
+        setTimeout(() => aiMove(), 500); // AI takes a turn after a short delay
+    }
+}
 
+// Make Move Function
+function makeMove(index, player) {
+    gameBoard[index] = player;
+    cells[index].textContent = player;
     checkWinner();
 }
 
-// Check for a Winner
+// AI Opponent Logic (Minimax for Smarter AI)
+function aiMove() {
+    let bestMove = minimax(gameBoard, "O").index;
+    if (bestMove !== undefined) {
+        makeMove(bestMove, "O");
+    }
+}
+
+// Minimax Algorithm (AI Decision Making)
+function minimax(board, player) {
+    let availableSpots = board.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
+
+    // Check for a winner or tie
+    if (checkWin(board, "X")) return { score: -10 };
+    if (checkWin(board, "O")) return { score: 10 };
+    if (availableSpots.length === 0) return { score: 0 };
+
+    let moves = [];
+    
+    for (let i of availableSpots) {
+        let move = {};
+        move.index = i;
+        board[i] = player;
+
+        if (player === "O") {
+            let result = minimax(board, "X");
+            move.score = result.score;
+        } else {
+            let result = minimax(board, "O");
+            move.score = result.score;
+        }
+
+        board[i] = "";
+        moves.push(move);
+    }
+
+    let bestMove;
+    if (player === "O") {
+        let bestScore = -Infinity;
+        for (let move of moves) {
+            if (move.score > bestScore) {
+                bestScore = move.score;
+                bestMove = move;
+            }
+        }
+    } else {
+        let bestScore = Infinity;
+        for (let move of moves) {
+            if (move.score < bestScore) {
+                bestScore = move.score;
+                bestMove = move;
+            }
+        }
+    }
+
+    return bestMove;
+}
+
+// Check Winner Function
 function checkWinner() {
     for (const condition of winPatterns) {
         const [a, b, c] = condition;
@@ -43,6 +110,11 @@ function checkWinner() {
 
     currentPlayer = currentPlayer === "X" ? "O" : "X";
     statusText.textContent = `Player ${currentPlayer}'s Turn`;
+}
+
+// Check Win (Used in Minimax)
+function checkWin(board, player) {
+    return winPatterns.some(pattern => pattern.every(index => board[index] === player));
 }
 
 // Reset Game
